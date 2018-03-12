@@ -25,87 +25,88 @@ SECRETS_DIR = os.path.join(ROOT_DIR, '.secrets')
 # SECRETS_LOCAL = os.path.join(SECRETS_DIR, 'local.json')
 SECRETS_BASE = os.path.join(SECRETS_DIR, 'base.json')
 SECRETS_LOCAL = os.path.join(SECRETS_DIR, 'local.json')
+SECRETS_DEV = os.path.join(SECRETS_DIR, 'dev.json')
+
 
 secrets = json.loads(open(SECRETS_BASE, 'rt').read())
+# secrets_local = json.loads(open(SECRETS_LOCAL, 'rt').read())
+# secrets_dev = json.loads(open(SECRETS_DEV, 'rt').read())
 
 
 # # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets["SECRET_KEY"]
+# SECRET_KEY = secrets["SECRET_KEY"]
 
 
-
-def set_config(obj, start=False):
-    """
-    Python객체를 받아, 해당 객체의 key-value쌍을
-    현재 모듈(config.settings.base)에 동적으로 할당
-    1. dict거나 list일 경우에는 내부 값들이 eval()이 가능한지 검사해야 함
-    2. value가 dict나 list가 아닐 경우에는
-        2-1. eval()이 가능하다면 해당 결과를 할당
-        2-2. eval()이 불가능하다면 (일반 텍스트나 숫자일 경우) 값 자체를 할당
-    :param obj:
-    :return:
-    """
-
-    def eval_obj(obj):
-        """
-        주어진 파이썬 객체의 타입에 따라 eval()결과를 반환하거나 불가한 경우 그냥 그 객체를 반환
-        1. 그대로 반환
-            - int, float형이거나 str형이며 숫자 변환이 가능한 경우에는 그대로 반환
-            - eval()에서 예외가 발생했으며 없는 변수를 참조할때의 NameError가 발생한 경우
-        2. eval() 평가값을 반환
-            - 1번의 경우가 아니며 eval()이 가능한 경우 평가값을 반환
-        3. 그대로 반환하되, 로그를 출력
-            - 1번의 경우가 아니며 eval()에서 NameError외의 예외가 발생한 경우
-        :param obj: 파이썬 객체
-        :return: eval(obj)또는 obj
-        """
-        # 객체가 int, float거나
-        if isinstance(obj, numbers.Number) or (
-                # str형이면서 숫자 변환이 가능한 경우
-                isinstance(obj, str) and obj.isdigit()):
-            return obj
-
-        # 객체가 int, float가 아니면서 숫자형태를 가진 str도 아닐경우
-        try:
-            return eval(obj)
-        except NameError:
-            # 없는 변수를 참조할 때 발생하는 예외
-            return obj
-        except Exception as e:
-            print(f'Cannot eval object({obj}), Exception: {e}')
-            return obj
-            # raise ValueError(f'Cannot eval object({obj}), Exception: {e}')
-
-    # base.json파일을 parsing한 결과 (Python dict)를 순회
-    # set_config에 전달된 객체가 'dict'형태일 경우
-    if isinstance(obj, dict):
-        # key, value를 순회
-        for key, value in obj.items():
-            # value가 dict거나 list일 경우 재귀적으로 함수를 다시 실행
-            if isinstance(value, dict) or isinstance(value, list):
-                set_config(value)
-            # 그 외의 경우 value를 평가한 값을 할당
-            else:
-                obj[key] = eval_obj(value)
-            # set_config()가 처음 호출된 loop에서만 setattr()을 실행
-            if start:
-                setattr(sys.modules[__name__], key, value)
-    # 전달된 객체가 'list'형태일 경우
-    elif isinstance(obj, list):
-        # list아이템을 순회하며
-        for index, item in enumerate(obj):
-            # list의 해당 index에 item을 평가한 값을 할당
-            obj[index] = eval(item)
-
-
-# set_config에서 'raven'모듈을 필요로 하나, 이 모듈의 다른 부분에서 사용하지 않음
-# import raven이라고 쓸 경우 Code reformating에서 필요없는 import로 인식해서 지워짐
-# raven모듈을 importlib를 사용해 가져온 후 현재 모듈에 'raven'이라는 이름으로 할당
-setattr(sys.modules[__name__], 'raven', importlib.import_module('raven'))
-set_config(secrets, start=True)
-
-print(f'SECRET_KEY: {getattr(sys.modules[__name__], "SECRET_KEY")}')
-print(f'RAVEN_CONFIG: {getattr(sys.modules[__name__], "RAVEN_CONFIG")}')
+# def set_config(obj, module_name=None, start=False):
+#     """
+#     Python객체를 받아, 해당 객체의 key-value쌍을
+#     현재 모듈(config.settings.base)에 동적으로 할당
+#     1. dict거나 list일 경우에는 내부 값들이 eval()이 가능한지 검사해야 함
+#     2. value가 dict나 list가 아닐 경우에는
+#         2-1. eval()이 가능하다면 해당 결과를 할당
+#         2-2. eval()이 불가능하다면 (일반 텍스트나 숫자일 경우) 값 자체를 할당
+#     :param obj:
+#     :return:
+#     """
+#
+#     def eval_obj(obj):
+#         """
+#         주어진 파이썬 객체의 타입에 따라 eval()결과를 반환하거나 불가한 경우 그냥 그 객체를 반환
+#         1. 그대로 반환
+#             - int, float형이거나 str형이며 숫자 변환이 가능한 경우에는 그대로 반환
+#             - eval()에서 예외가 발생했으며 없는 변수를 참조할때의 NameError가 발생한 경우
+#         2. eval() 평가값을 반환
+#             - 1번의 경우가 아니며 eval()이 가능한 경우 평가값을 반환
+#         3. 그대로 반환하되, 로그를 출력
+#             - 1번의 경우가 아니며 eval()에서 NameError외의 예외가 발생한 경우
+#         :param obj: 파이썬 객체
+#         :return: eval(obj)또는 obj
+#         """
+#         # 객체가 int, float거나
+#         if isinstance(obj, numbers.Number) or (
+#                 # str형이면서 숫자 변환이 가능한 경우
+#                 isinstance(obj, str) and obj.isdigit()):
+#             return obj
+#
+#         # 객체가 int, float가 아니면서 숫자형태를 가진 str도 아닐경우
+#         try:
+#             return eval(obj)
+#         except NameError:
+#             # 없는 변수를 참조할 때 발생하는 예외
+#             return obj
+#         except Exception as e:
+#             print(f'Cannot eval object({obj}), Exception: {e}')
+#             return obj
+#             # raise ValueError(f'Cannot eval object({obj}), Exception: {e}')
+#
+#     # base.json파일을 parsing한 결과 (Python dict)를 순회
+#     # set_config에 전달된 객체가 'dict'형태일 경우
+#     if isinstance(obj, dict):
+#         # key, value를 순회
+#         for key, value in obj.items():
+#             # value가 dict거나 list일 경우 재귀적으로 함수를 다시 실행
+#             if isinstance(value, dict) or isinstance(value, list):
+#                 set_config(value)
+#             # 그 외의 경우 value를 평가한 값을 할당
+#             else:
+#                 obj[key] = eval_obj(value)
+#             # set_config()가 처음 호출된 loop에서만 setattr()을 실행
+#             if start:
+#                 setattr(sys.modules[module_name], key, value)
+#     # 전달된 객체가 'list'형태일 경우
+#     elif isinstance(obj, list):
+#         # list아이템을 순회하며
+#         for index, item in enumerate(obj):
+#             # list의 해당 index에 item을 평가한 값을 할당
+#             obj[index] = eval_obj(item)
+#
+#
+# # set_config에서 'raven'모듈을 필요로 하나, 이 모듈의 다른 부분에서 사용하지 않음
+# # import raven이라고 쓸 경우 Code reformating에서 필요없는 import로 인식해서 지워짐
+# # raven모듈을 importlib를 사용해 가져온 후 현재 모듈에 'raven'이라는 이름으로 할당
+# setattr(sys.modules[__name__], 'raven', importlib.import_module('raven'))
+# set_config(secrets, module_name=__name__, start=True)
+# print(getattr(sys.modules[__name__], 'RAVEN_CONFIG'))
 
 
 
@@ -133,18 +134,20 @@ print(f'RAVEN_CONFIG: {getattr(sys.modules[__name__], "RAVEN_CONFIG")}')
 
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
+STATIC_ROOT = os.path.join(ROOT_DIR, '.static_root')
 STATIC_URL = '/static/'
 
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    STATIC_DIR
+]
 
 
 
+# 3/9 실수.
+# Auth
+AUTH_USER_MODEL = 'members.User'
 
 
 # Application definition
@@ -158,10 +161,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Thirdparty App
-    'django_extensions',
     'raven.contrib.django.raven_compat',
 
     # Custom App
+    'members',
 
 ]
 
@@ -192,6 +195,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 
 
@@ -280,3 +285,117 @@ LOGGING = {
         },
     },
 }
+
+
+def set_config(obj, module_name=None, start=False):
+    """
+    Python객체를 받아, 해당 객체의 key-value쌍을
+    현재 모듈(config.settings.base)에 동적으로 할당
+    1. dict거나 list일 경우에는 내부 값들이 eval()이 가능한지 검사해야 함
+    2. value가 dict나 list가 아닐 경우에는
+        2-1. eval()이 가능하다면 해당 결과를 할당
+        2-2. eval()이 불가능하다면 (일반 텍스트나 숫자일 경우) 값 자체를 할당
+    :param obj:
+    :return:
+    """
+
+    def eval_obj(obj):
+        """
+        주어진 파이썬 객체의 타입에 따라 eval()결과를 반환하거나 불가한 경우 그냥 그 객체를 반환
+        1. 그대로 반환
+            - int, float형이거나 str형이며 숫자 변환이 가능한 경우에는 그대로 반환
+            - eval()에서 예외가 발생했으며 없는 변수를 참조할때의 NameError가 발생한 경우
+        2. eval() 평가값을 반환
+            - 1번의 경우가 아니며 eval()이 가능한 경우 평가값을 반환
+        3. 그대로 반환하되, 로그를 출력
+            - 1번의 경우가 아니며 eval()에서 NameError외의 예외가 발생한 경우
+        :param obj: 파이썬 객체
+        :return: eval(obj)또는 obj
+        """
+        # 객체가 int, float거나
+        if isinstance(obj, numbers.Number) or (
+                # str형이면서 숫자 변환이 가능한 경우
+                isinstance(obj, str) and obj.isdigit()):
+
+                ## 3/10 복습 과정 중 이해한 내용 ##
+
+                # 1) obj가 "int, float"일 경우 그냥 1234 이런 값을 return
+                # 2) obj가 "str이면서 숫자형변환 가능"한 경우 그냥 '1234' 이런 값을 return
+                #    왜냐면 아래 try구문에서 그냥 eval('1234') 해버리면
+                #    그 결과로 '1234'가 아닌 1234가 return되는데
+                #    이 경우 원래 해당 키에 넣었던 값이 '1234'에서 1234로 바뀌어 버리는 문제가 발생.
+                #
+                # " [2-1 Python]의 * 동적 스페셜 정리 * 참고] "
+
+            return obj
+
+        # 객체가 int, float가 아니면서 숫자형태를 가진 str도 아닐경우
+        try:
+            return eval(obj)
+        except NameError as e:
+            # 없는 변수를 참조할 때 발생하는 예외
+            print(f'NameError: {obj}, [error: {e}]')
+            return obj
+        except Exception as e:
+            print(f'Exception: {obj}, [error: {e}]')
+            return obj
+            # raise ValueError(f'Cannot eval object({obj}), Exception: {e}')
+
+    # base.json파일을 parsing한 결과 (Python dict)를 순회
+    # set_config에 전달된 객체가 'dict'형태일 경우
+    if isinstance(obj, dict):
+        # key, value를 순회
+        for key, value in obj.items():
+            # value가 dict거나 list일 경우 재귀적으로 함수를 다시 실행
+            if isinstance(value, dict) or isinstance(value, list):
+                set_config(value)
+            # 그 외의 경우 value를 평가한 값을 할당
+            else:
+                obj[key] = eval_obj(value)
+            # set_config()가 처음 호출된 loop에서만 setattr()을 실행
+            if start:
+                setattr(sys.modules[module_name], key, value)
+    # 전달된 객체가 'list'형태일 경우
+    elif isinstance(obj, list):
+        # list아이템을 순회하며
+        for index, item in enumerate(obj):
+
+            # 1) 3/9 수업시간 try ~ except 생략하기 전 코드
+            try:
+                # list의 해당 index에 item을 평가한 값을 할당
+                obj[index] = eval(item)
+            except Exception as e:
+                print('')
+                print(f'list {index}번째 {item} 할당 안됨')
+                print(f'Exception발생 : {e}')
+                pass
+
+            # # 2) 3/9 수업시간 마지막 부분 코드
+            # # list의 해당 index에 item을 평가한 값을 할당
+            # obj[index] = eval(item)
+
+            # 3) 수업시간 마지막 부분 코드 + 개선(간단하게 헬퍼함수 사용)
+            obj[index] = eval_obj(item)
+
+
+# set_config에서 'raven'모듈을 필요로 하나, 이 모듈의 다른 부분에서 사용하지 않음
+# import raven이라고 쓸 경우 Code reformating에서 필요없는 import로 인식해서 지워짐
+# raven모듈을 importlib를 사용해 가져온 후 현재 모듈에 'raven'이라는 이름으로 할당
+setattr(sys.modules[__name__], 'raven', importlib.import_module('raven'))
+
+
+# set_config(secrets, module_name=__name__, start=True)
+# set_config(secrets_local, start=True)
+
+set_config(secrets, module_name=__name__, start=True)
+
+# 잘 들어갔나 확인
+# print(getattr(sys.modules[__name__], 'DATABASE')) # 이거넣으면 오류?
+print(getattr(sys.modules[__name__], 'RAVEN_CONFIG'))
+
+
+print('')
+print(f'SECRET_KEY: {getattr(sys.modules[__name__], "SECRET_KEY")}')
+print(f'RAVEN_CONFIG: {getattr(sys.modules[__name__], "RAVEN_CONFIG")}')
+print(f'RAVEN_CONFIG: {getattr(sys.modules[__name__], "TEST_LIST")}')
+print('')
