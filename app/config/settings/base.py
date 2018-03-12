@@ -37,23 +37,13 @@ secrets = json.loads(open(SECRETS_BASE, 'rt').read())
 # SECRET_KEY = secrets["SECRET_KEY"]
 
 
-
+# AWS
 # * * * * *
-
-# 파일의 읽기 권한을 없앰
-AWS_DEFAULT_ACL = 'private'
-
-# 3/7 질문답변 시간 설명 (signature version 4에서 바뀐것)
-# 3/6 After the class fixed by lhy
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_S3_REGION_NAME = 'ap-northeast-2'
-
 
 MEDIAFILES_LOCATION = 'media'
 STATICFILES_LOCATION = 'static'
 
 # * * * * *
-
 
 
 STATIC_ROOT = os.path.join(ROOT_DIR, '.static_root')
@@ -63,8 +53,6 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     STATIC_DIR
 ]
-
-
 
 
 # 3/9 실수.
@@ -84,7 +72,6 @@ INSTALLED_APPS = [
 
     # Thirdparty App
     'raven.contrib.django.raven_compat',
-    'storages',
 
     # Custom App
     'members',
