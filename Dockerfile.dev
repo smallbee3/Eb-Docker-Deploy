@@ -34,13 +34,15 @@ RUN         cp -f   /srv/project/.config/${BUILD_MODE}/nginx.conf       /etc/ngi
 RUN         cp -f   /srv/project/.config/dev/supervisord.conf /etc/supervisor/conf.d/
 
 
+# 빌드 과정에서하는게 별로 의미가 없기 때문에 뺀것
 
-# 3/12 docker env googling
-ENV         PATH /srv/project/app/config/settings/dev:$PATH
 
-# Sqlite DB migrate, createsuperuser
-WORKDIR     /srv/project/app
-RUN         python manage.py migrate && python manage.py createsu
+## 3/12 docker env googling
+#ENV         PATH /srv/project/app/config/settings/dev:$PATH
+#
+## Sqlite DB migrate, createsuperuser
+#WORKDIR     /srv/project/app
+#RUN         python manage.py migrate && python manage.py createsu
 
 
 
