@@ -29,7 +29,6 @@ SECRETS_DEV = os.path.join(SECRETS_DIR, 'dev.json')
 SECRETS_PRODUCTION = os.path.join(SECRETS_DIR, 'dev.json')
 
 
-
 secrets = json.loads(open(SECRETS_BASE, 'rt').read())
 # secrets_local = json.loads(open(SECRETS_LOCAL, 'rt').read())
 # secrets_dev = json.loads(open(SECRETS_DEV, 'rt').read())
@@ -46,6 +45,10 @@ MEDIAFILES_LOCATION = 'media'
 STATICFILES_LOCATION = 'static'
 
 # * * * * *
+
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+MEDIA_ROOT = os.path.join(ROOT_DIR, '.media')
+MEDIA_URL = '/media/'
 
 
 STATIC_ROOT = os.path.join(ROOT_DIR, '.static_root')
@@ -95,7 +98,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            TEMPLATES_DIR
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
