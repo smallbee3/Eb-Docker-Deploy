@@ -1,6 +1,6 @@
 # EC2 Deploy project
 
-AWS의 EC2 배포를 연습하는 프로젝트입니다.
+Elastic Beanstalk를 연습하는 프로젝트입니다.
 `.secrets`폴더내의 파일로 비밀 키를 관리합니다.
 
 DB로 PostgreSQL을 사용하며, `local`환경에서는 `localhost`의 DB, `dev`환경과 `production`환경에서는 `AWS RDS`의 DB를 사용합니다.
@@ -21,13 +21,17 @@ DB, Storage에 외부 서비스 (AWS RDS, S3)를 사용
 
 ## Requirements
 
+### 로컬 테스트
+
 - Python (3.6)
 - PostgreSQL
 
 ## Installation
 
+
+
 ```
-pip install -r requirements.txt
+pip install -r ./.requirements/dev.txt
 ```
 
 ## Secrets
@@ -48,30 +52,19 @@ pip install -r requirements.txt
   },
   "SUPERUSER_USERNAME": "<SUPERUSER_USERNAME>",
   "SUPERUSER_PASSWORD": "<SUPERUSER_PASSWORD>",
-  "SUPERUSER_EMAIL": "<SUPERUSER_EMAIL>"
+  "SUPERUSER_EMAIL": "<SUPERUSER_EMAIL>",
+
+  "AWS_ACCESS_KEY_ID": "<AWS_ACCESS_KEY_ID>",
+  "AWS_SECRET_ACCESS_KEY": "<AWS_SECRET_ACCESS_KEY>",
+  "AWS_STORAGE_BUCKET_NAME": "<AWS_STORAGE_BUCKET_NAME>",
+  "AWS_S3_SIGNATURE_VERSION": "<AWS_S3_SIGNATURE_VERSION>",
+  "AWS_S3_REGION_NAME": "<AWS_S3_REGION_NAME>",
+  "AWS_S3_ENDPOINT_URL": "<AWS_S3_ENDPOINT_URL>",
+  "AWS_DEFAULT_ACL" : "<AWS_DEFAULT_ACL>"
 }
 
 ```
 
-
-
-
-**`.secrets/local.json`**
-
-```json
-{
-  "DATABASES": {
-    "default": {
-      "ENGINE": "django.db.backends.postgresql",
-      "HOST": "localhost",
-      "NAME": "<DB name>",
-      "USER": "<DB username>",
-      "PASSWORD": "<DB user password>",
-      "PORT": <Port number, default:5432>
-    }
-  }
-}
-```
 
 **`.secrets/dev.json`**
 
