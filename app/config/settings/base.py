@@ -21,8 +21,7 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 SECRETS_DIR = os.path.join(ROOT_DIR, '.secrets')
-# SECRETS_BASE = json.loads(open(SECRETS_DIR, 'rt').read())
-# SECRETS_LOCAL = os.path.join(SECRETS_DIR, 'local.json')
+
 SECRETS_BASE = os.path.join(SECRETS_DIR, 'base.json')
 SECRETS_LOCAL = os.path.join(SECRETS_DIR, 'local.json')
 SECRETS_DEV = os.path.join(SECRETS_DIR, 'dev.json')
