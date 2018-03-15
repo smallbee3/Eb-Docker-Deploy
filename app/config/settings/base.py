@@ -79,6 +79,7 @@ INSTALLED_APPS = [
 
     # Custom App
     'members',
+    'utils',
 
 ]
 

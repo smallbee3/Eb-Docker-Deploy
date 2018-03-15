@@ -27,4 +27,4 @@ DEFAULT_FILE_STORAGE = 'config.storages.MediaStorage'
 
 # Static files(collectstatic)를 위한 스토리지
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'config.storages.StaticStorage'
+# STATICFILES_STORAGE = 'config.storages.StaticStorage'
